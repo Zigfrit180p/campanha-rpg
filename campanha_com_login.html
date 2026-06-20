@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossiê Paranormal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root{
+    --void:#0c0a09;
+    --void-2:#161210;
+    --ash:#221d19;
+    --ash-2:#2e2620;
+    --parchment:#d9cbab;
+    --parchment-dim:#a4937a;
+    --blood:#7d1d28;
+    --blood-bright:#a3303d;
+    --ember:#b9793a;
+    --ember-bright:#d9954f;
+    --sickly:#525c44;
+    --line: rgba(185,121,58,0.22);
+    --shadow: 0 10px 30px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(125,29,40,0.18), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 50% 110%, rgba(0,0,0,0.6), transparent 60%),
+      var(--void);
+    color:var(--parchment);
+    font-family:'Crimson Pro', Georgia, serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:1000;
+    opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a{color:var(--ember-bright);}
+  button{font-family:inherit;cursor:pointer;}
+  input,textarea,select{font-family:'Crimson Pro', Georgia, serif;}
+
+  :focus-visible{outline:2px solid var(--ember-bright); outline-offset:2px;}
+
+  #app{max-width:880px;margin:0 auto;padding:0 20px 80px;position:relative;}
+
+  /* ---------- HEADER ---------- */
+  .site-header{
+    padding:56px 0 28px;
+    text-align:center;
+    position:relative;
+  }
+  .case-no{
+    font-family:'Courier Prime', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    color:var(--parchment-dim);
+    text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .candle-glow{
+    position:absolute; left:50%; top:30px; width:340px; height:200px;
+    transform:translateX(-50%);
+    background:radial-gradient(ellipse at center, rgba(217,149,79,0.35), transparent 70%);
+    filter:blur(10px);
+    animation:flicker 5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes flicker{
+    0%,100%{opacity:0.9; transform:translateX(-50%) scale(1);}
+    35%{opacity:0.6; transform:translateX(-50%) scale(0.96);}
+    50%{opacity:1; transform:translateX(-50%) scale(1.03);}
+    72%{opacity:0.7; transform:translateX(-50%) scale(0.98);}
+  }
+  .site-title{
+    position:relative;
+    font-family:'Pirata One', serif;
+    font-size:3.4rem;
+    font-weight:400;
+    letter-spacing:0.04em;
+    color:var(--parchment);
+    text-shadow:0 0 24px rgba(217,149,79,0.35), 0 2px 0 rgba(0,0,0,0.6);
+    margin:0;
+    line-height:1.15;
+    cursor:text;
+  }
+  .site-title:hover{text-shadow:0 0 30px rgba(217,149,79,0.55), 0 2px 0 rgba(0,0,0,0.6);}
+  .site-tagline{
+    position:relative;
+    font-style:italic;
+    color:var(--parchment-dim);
+    font-size:1rem;
+    margin:10px auto 0;
+    max-width:520px;
+    cursor:text;
+  }
+  .edit-hint{
+    font-family:'Courier Prime',monospace;
+    font-size:0.65rem;
+    letter-spacing:0.1em;
+    color:var(--parchment-dim);
+    opacity:0;
+    transition:opacity .2s;
+    margin-top:10px;
+    text-transform:uppercase;
+  }
+  .site-header:hover .edit-hint{opacity:0.55;}
+  .header-edit-form{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:8px;}
+  .header-edit-form input{
+    background:var(--ash); border:1px solid var(--line); color:var(--parchment);
+    padding:8px 12px; border-radius:3px; text-align:center; width:min(420px,90%);
+  }
+  .header-edit-form .row{display:flex; gap:8px;}
+
+  /* torn divider */
+  .torn{
+    width:100%; height:14px; margin-top:10px;
+    background:
+      linear-gradient(135deg, var(--ash) 25%, transparent 25%) 0 0/14px 14px,
+      linear-gradient(225deg, var(--ash) 25%, transparent 25%) 0 0/14px 14px;
+    background-color:transparent;
+    opacity:0.9;
+  }
+
+  /* ---------- HIDDEN INDEX (menu trigger + drawer) ---------- */
+  .menu-trigger{
+    position:fixed; top:26px; left:0; z-index:200;
+    background:var(--ash-2);
+    border:1px solid var(--ember);
+    border-left:none;
+    color:var(--parchment-dim);
+    padding:13px 18px 13px 12px;
+    border-radius:0 3px 3px 0;
+    display:flex; align-items:center; gap:9px;
+    font-family:'Courier Prime', monospace;
+    font-size:0.66rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    box-shadow:0 8px 20px rgba(0,0,0,0.55);
+    transition:all .2s;
+  }
+  .menu-trigger svg{width:17px;height:17px; flex-shrink:0;}
+  .menu-trigger:hover{color:var(--ember-bright); border-color:var(--ember-bright); padding-left:18px;}
+
+  .drawer-overlay{
+    position:fixed; inset:0; background:rgba(6,5,4,0.72); backdrop-filter:blur(1.5px);
+    z-index:600; opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .drawer-overlay.open{opacity:1; pointer-events:auto;}
+
+  .drawer{
+    position:fixed; top:0; left:0; bottom:0; width:290px; max-width:84vw;
+    background:var(--void-2);
+    border-right:1px solid var(--ember);
+    z-index:601;
+    transform:translateX(-100%);
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column;
+    box-shadow:18px 0 50px rgba(0,0,0,0.65);
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{
+    padding:26px 22px 18px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .drawer-head .stamp-label{
+    font-family:'Courier Prime',monospace; font-size:0.6rem; letter-spacing:0.14em;
+    color:var(--blood-bright); text-transform:uppercase; margin-bottom:6px; display:block;
+  }
+  .drawer-head h4{
+    font-family:'Cinzel', serif; text-transform:uppercase; letter-spacing:0.07em;
+    font-size:0.95rem; color:var(--parchment); margin:0; line-height:1.4;
+  }
+  .drawer-close{background:none; border:none; color:var(--parchment-dim); padding:4px; flex-shrink:0;}
+  .drawer-close svg{width:16px;height:16px; display:block;}
+  .drawer-close:hover{color:var(--ember-bright);}
+  .drawer-list{padding:10px 0; flex:1;}
+  .drawer-item{
+    display:flex; align-items:center; gap:13px; width:100%;
+    background:none; border:none; border-left:3px solid transparent;
+    color:var(--parchment-dim);
+    padding:15px 22px;
+    text-align:left;
+    font-family:'Cinzel', serif;
+    font-size:0.94rem;
+    letter-spacing:0.03em;
+    transition:all .15s;
+  }
+  .drawer-item svg{width:16px;height:16px; flex-shrink:0; opacity:0.8;}
+  .drawer-item:hover{background:rgba(185,121,58,0.07); color:var(--parchment);}
+  .drawer-item.active{
+    color:var(--parchment);
+    border-left-color:var(--blood-bright);
+    background:rgba(125,29,40,0.14);
+  }
+  .drawer-item .tag-restrict{
+    margin-left:auto; font-family:'Courier Prime',monospace; font-size:0.58rem;
+    letter-spacing:0.08em; color:var(--blood-bright); text-transform:uppercase; opacity:0.85;
+  }
+  .drawer-foot{
+    padding:16px 22px; border-top:1px solid var(--line);
+    font-family:'Courier Prime',monospace; font-size:0.6rem; color:var(--parchment-dim);
+    letter-spacing:0.06em; text-transform:uppercase; opacity:0.6; line-height:1.6;
+  }
+
+  /* redacted block (cosmetic) */
+  .redact{
+    display:inline-block; height:0.8em; background:#070504; border-radius:1px;
+    vertical-align:middle; margin:0 2px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(255,255,255,0.04);
+    transform:translateY(-1px);
+  }
+
+  /* classified watermark */
+  .watermark{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .watermark span{
+    font-family:'Cinzel', serif; font-weight:700; font-size:7.5rem; letter-spacing:0.12em;
+    color:var(--parchment); opacity:0.025; transform:rotate(-16deg); white-space:nowrap;
+  }
+
+  main#content{
+    background:var(--ash);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:34px 30px;
+    min-height:300px;
+    box-shadow:var(--shadow);
+  }
+
+  .section-head{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    margin-bottom:26px; flex-wrap:wrap;
+  }
+  .section-title{
+    font-family:'Cinzel', serif;
+    font-size:1.3rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--parchment);
+    padding-left:14px;
+    border-left:3px solid var(--blood-bright);
+    margin:0;
+  }
+  .section-sub{
+    font-family:'Courier Prime',monospace;
+    font-size:0.72rem;
+    color:var(--parchment-dim);
+    letter-spacing:0.06em;
+    margin-top:4px;
+    padding-left:17px;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    border-radius:2px; border:1px solid var(--line);
+    padding:9px 16px;
+    font-family:'Courier Prime', monospace;
+    font-size:0.74rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    background:transparent;
+    color:var(--parchment);
+    transition:all .15s;
+    white-space:nowrap;
+  }
+  .btn svg{width:14px;height:14px;}
+  .btn:hover{border-color:var(--ember-bright); color:var(--ember-bright);}
+  .btn-primary{background:var(--blood); border-color:var(--blood); color:#f1e6d8;}
+  .btn-primary:hover{background:var(--blood-bright); border-color:var(--blood-bright); color:#fff;}
+  .btn-ghost{border-color:transparent; color:var(--parchment-dim);}
+  .btn-ghost:hover{color:var(--ember-bright);}
+  .btn-icon{padding:7px; border-radius:2px;}
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap;}
+
+  /* ---------- CARDS (sessions / news) ---------- */
+  .card-list{display:flex; flex-direction:column; gap:18px;}
+  .entry-card{
+    background:var(--void-2);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:20px 22px;
+    position:relative;
+    transition:border-color .2s, transform .15s;
+  }
+  .entry-card:nth-child(odd){transform:rotate(-0.25deg);}
+  .entry-card:nth-child(even){transform:rotate(0.25deg);}
+  .entry-card:hover{border-color:var(--ember);}
+  .entry-meta{
+    font-family:'Courier Prime', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ember-bright);
+    display:flex; gap:14px; flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .entry-title{
+    font-family:'Cinzel', serif;
+    font-size:1.15rem;
+    color:var(--parchment);
+    margin:0 0 8px;
+  }
+  .entry-body{
+    color:var(--parchment-dim);
+    line-height:1.65;
+    white-space:pre-wrap;
+  }
+  .entry-notes{
+    margin-top:14px; padding-top:14px;
+    border-top:1px dashed var(--line);
+    color:var(--parchment-dim);
+    line-height:1.7;
+    white-space:pre-wrap;
+    display:none;
+  }
+  .entry-notes.open{display:block;}
+  .entry-toggle{
+    margin-top:10px;
+    background:none; border:none; color:var(--ember);
+    font-family:'Courier Prime',monospace; font-size:0.72rem;
+    letter-spacing:0.06em; text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:5px; padding:0;
+  }
+  .entry-toggle:hover{color:var(--ember-bright);}
+  .entry-toggle svg{width:12px;height:12px; transition:transform .2s;}
+  .entry-toggle.open svg{transform:rotate(180deg);}
+  .entry-actions{
+    position:absolute; top:16px; right:16px;
+    display:flex; gap:4px;
+  }
+  .entry-actions button{
+    background:transparent; border:1px solid transparent; color:var(--parchment-dim);
+    padding:5px; border-radius:2px;
+  }
+  .entry-actions button svg{width:14px;height:14px; display:block;}
+  .entry-actions button:hover{color:var(--ember-bright); border-color:var(--line);}
+
+  .news-byline{
+    font-style:italic; color:var(--parchment-dim); font-size:0.85rem; margin-bottom:10px;
+  }
+  .pin-dot{
+    width:8px; height:8px; border-radius:50%; background:var(--blood-bright);
+    display:inline-block; margin-right:8px; box-shadow:0 0 8px rgba(163,48,61,0.8);
+  }
+
+  /* ---------- EMPTY STATE ---------- */
+  .empty-state{
+    text-align:center; padding:50px 20px; color:var(--parchment-dim);
+  }
+  .empty-state .glyph{font-size:2rem; opacity:0.5; margin-bottom:14px;}
+  .empty-state p{font-style:italic; max-width:380px; margin:0 auto 18px; line-height:1.6;}
+
+  /* ---------- DOCUMENTS GATE ---------- */
+  .gate-wrap{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:30px 10px 10px;
+  }
+  .seal{
+    width:128px; height:128px; border-radius:50%;
+    background:
+      radial-gradient(circle at 35% 30%, var(--blood-bright), var(--blood) 55%, #4a1117 100%);
+    box-shadow: inset 0 4px 10px rgba(255,180,150,0.25), inset 0 -8px 16px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.6);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:22px; position:relative;
+  }
+  .seal svg{width:52px; height:52px; opacity:0.85;}
+  .seal.shake{animation:shake .4s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px) rotate(-2deg);}
+    40%{transform:translateX(7px) rotate(2deg);}
+    60%{transform:translateX(-5px) rotate(-1deg);}
+    80%{transform:translateX(4px) rotate(1deg);}
+  }
+  .gate-label{
+    font-family:'Cinzel', serif; text-transform:uppercase; letter-spacing:0.1em;
+    color:var(--parchment); font-size:1rem; margin-bottom:6px;
+  }
+  .gate-sub{color:var(--parchment-dim); font-size:0.88rem; max-width:360px; margin-bottom:22px; line-height:1.6;}
+  .gate-form{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  .gate-form input{
+    background:var(--void-2); border:1px solid var(--line); color:var(--parchment);
+    padding:11px 14px; border-radius:2px; font-family:'Courier Prime',monospace;
+    letter-spacing:0.08em; min-width:200px; text-align:center;
+  }
+  .gate-form input:focus{border-color:var(--ember-bright);}
+
+  .doc-card{
+    background:var(--void-2); border:1px solid var(--line); border-radius:2px;
+    padding:18px 20px; position:relative; margin-bottom:14px;
+  }
+  .restricted-tag{
+    position:absolute; top:-9px; right:14px;
+    background:var(--blood); color:#f1e6d8; font-family:'Courier Prime',monospace;
+    font-size:0.6rem; letter-spacing:0.12em; padding:3px 8px; border-radius:2px;
+    text-transform:uppercase; box-shadow:0 3px 8px rgba(0,0,0,0.5);
+  }
+  .doc-title{font-family:'Cinzel',serif; font-size:1.05rem; color:var(--parchment); margin:4px 0 6px;}
+  .doc-desc{color:var(--parchment-dim); font-size:0.92rem; line-height:1.55; margin-bottom:10px; white-space:pre-wrap;}
+  .doc-text{
+    background:var(--void); border:1px dashed var(--line); padding:14px 16px; border-radius:2px;
+    color:var(--parchment-dim); white-space:pre-wrap; line-height:1.6; font-size:0.92rem; margin-top:8px;
+  }
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(8,6,5,0.78); backdrop-filter:blur(2px);
+    display:flex; align-items:flex-start; justify-content:center; padding:6vh 16px;
+    z-index:500; overflow-y:auto;
+  }
+  .modal{
+    background:var(--ash); border:1px solid var(--ember); border-radius:3px;
+    max-width:520px; width:100%; padding:28px 26px; box-shadow:0 20px 60px rgba(0,0,0,0.7);
+    position:relative;
+  }
+  .modal h3{
+    font-family:'Cinzel',serif; color:var(--parchment); text-transform:uppercase;
+    letter-spacing:0.06em; font-size:1.1rem; margin:0 0 18px; padding-right:30px;
+  }
+  .modal-close{
+    position:absolute; top:18px; right:18px; background:none; border:none; color:var(--parchment-dim);
+  }
+  .modal-close svg{width:18px;height:18px;}
+  .modal-close:hover{color:var(--ember-bright);}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block; font-family:'Courier Prime',monospace; font-size:0.68rem;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--parchment-dim); margin-bottom:6px;
+  }
+  .field input, .field textarea, .field select{
+    width:100%; background:var(--void-2); border:1px solid var(--line); color:var(--parchment);
+    padding:10px 12px; border-radius:2px; font-size:0.95rem;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--ember-bright);}
+  .field textarea{min-height:90px; resize:vertical; line-height:1.5;}
+  .field-row{display:flex; gap:12px;}
+  .field-row .field{flex:1;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:8px;}
+
+  /* ---------- TOAST ---------- */
+  #toast-root{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:900; display:flex; flex-direction:column; gap:8px; align-items:center;}
+  .toast{
+    font-family:'Courier Prime',monospace; font-size:0.78rem; letter-spacing:0.04em;
+    padding:11px 18px; border-radius:2px; background:var(--void-2); border:1px solid var(--ember);
+    color:var(--parchment); box-shadow:0 8px 22px rgba(0,0,0,0.5);
+    animation:toastIn .2s ease;
+  }
+  .toast.error{border-color:var(--blood-bright); color:#f1d8d8;}
+  @keyframes toastIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  .toast.fade{animation:toastOut .35s ease forwards;}
+  @keyframes toastOut{to{opacity:0; transform:translateY(-6px);}}
+
+  /* ---------- LOADING ---------- */
+  .loading-state{text-align:center; padding:70px 10px; color:var(--parchment-dim); font-style:italic;}
+
+  /* ---------- FOOTER ---------- */
+  .site-footer{
+    text-align:center; margin-top:40px; color:var(--parchment-dim); font-size:0.78rem;
+    font-style:italic; opacity:0.7;
+  }
+
+  @media (max-width:600px){
+    .site-title{font-size:2.3rem;}
+    main#content{padding:24px 18px;}
+    .tab-btn{padding:10px 14px; font-size:0.72rem;}
+    .field-row{flex-direction:column;}
+    .section-head{flex-direction:column; align-items:flex-start;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .candle-glow{animation:none;}
+    .seal.shake{animation:none;}
+    .toast{animation:none;}
+  }
+</style>
+
+<style id="auth-style">
+#authOverlay{position:fixed;inset:0;background:rgba(5,5,5,.92);z-index:99999;display:flex;align-items:center;justify-content:center}
+.auth-card{width:min(420px,92vw);background:#161210;border:1px solid #8a6a2f;padding:24px;border-radius:8px;color:#d9cbab;font-family:'Crimson Pro',serif}
+.auth-card h2{font-family:'Cinzel',serif;margin-bottom:12px}
+.auth-card input,.auth-card select{width:100%;margin:8px 0;padding:10px;background:#0c0a09;color:#d9cbab;border:1px solid #6b5328}
+.auth-card button{width:100%;padding:10px;margin-top:8px}
+</style>
+
+</head>
+<body>
+<div class="grain"></div>
+<button class="menu-trigger" id="menu-trigger" aria-label="Abrir índice do dossiê"></button>
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Índice do dossiê"></aside>
+<div id="app">
+  <header class="site-header" id="site-header"></header>
+  <main id="content"></main>
+  <div class="site-footer">dossiê mantido pela mesa &middot; que seu NEX nunca passe do limite</div>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= ICONS ================= */
+  const ICONS = {
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    pencil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+    link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    key:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.6 12.4 19 4"/><path d="M16 8l3 3"/><path d="M19 4l1.5 1.5"/></svg>',
+    chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+    lockOpen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.6-2"/></svg>',
+    lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>',
+    book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+    eye:'<svg viewBox="0 0 24 24" fill="none" stroke="#1c0a0c" stroke-width="1.6"><path d="M2 12c3-5 7-7.5 10-7.5S19 7 22 12c-3 5-7 7.5-10 7.5S5 17 2 12Z"/><circle cx="12" cy="12" r="3" fill="#1c0a0c"/></svg>'
+  };
+
+  /* ================= STATE ================= */
+  const state = {
+    meta: { siteTitle:'Dossi\u00ea Paranormal', tagline:'Relat\u00f3rios de campo de agentes que ainda respiram.', accessCode:'' },
+    sessions: [],
+    news: [],
+    documents: [],
+    activeTab: 'sessoes',
+    unlocked: false,
+    loading: true,
+    drawerOpen: false,
+    openNotes: {}
+  };
+
+  /* ================= UTILS ================= */
+  function uid(){
+    return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,9);
+  }
+  function escapeHtml(str){
+    if(str===undefined || str===null) return '';
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function fmtDate(d){
+    if(!d) return '';
+    try{
+      const parts = d.split('-');
+      if(parts.length===3){
+        const months=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+        return `${parseInt(parts[2],10)} ${months[parseInt(parts[1],10)-1]} ${parts[0]}`;
+      }
+    }catch(e){}
+    return d;
+  }
+
+  /* ================= STORAGE ================= */
+  async function storageGet(key, fallback){
+    try{
+      const res = await window.storage.get(key, true);
+      return res ? JSON.parse(res.value) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+  async function storageSet(key, value){
+    try{
+      const res = await window.storage.set(key, JSON.stringify(value), true);
+      return !!res;
+    }catch(e){
+      return false;
+    }
+  }
+
+  async function saveMeta(){
+    const ok = await storageSet('meta', state.meta);
+    if(!ok) toast('Não foi possível salvar. O arquivo está indisponível no momento.','error');
+    return ok;
+  }
+  async function saveSessions(){
+    const ok = await storageSet('sessions', state.sessions);
+    if(!ok) toast('Não foi possível salvar a sessão.','error');
+    return ok;
+  }
+  async function saveNews(){
+    const ok = await storageSet('news', state.news);
+    if(!ok) toast('Não foi possível salvar o comunicado.','error');
+    return ok;
+  }
+  async function saveDocuments(){
+    const ok = await storageSet('documents', state.documents);
+    if(!ok) toast('Não foi possível salvar o dossiê.','error');
+    return ok;
+  }
+
+  /* ================= TOAST ================= */
+  function toast(msg, type){
+    const root = document.getElementById('toast-root');
+    const el = document.createElement('div');
+    el.className = 'toast' + (type==='error' ? ' error' : '');
+    el.textContent = msg;
+    root.appendChild(el);
+    setTimeout(()=>{
+      el.classList.add('fade');
+      setTimeout(()=>el.remove(), 400);
+    }, 2800);
+  }
+
+  /* ================= MODAL ================= */
+  function openModal(innerHtml, onMount){
+    const root = document.getElementById('modal-root');
+    root.innerHTML = `<div class="overlay" id="overlay"><div class="modal">
+      <button class="modal-close" id="modal-close" aria-label="Fechar">${ICONS.x}</button>
+      ${innerHtml}
+    </div></div>`;
+    document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', escClose);
+    if(onMount) onMount();
+    const firstInput = root.querySelector('input, textarea, select');
+    if(firstInput) setTimeout(()=>firstInput.focus(), 30);
+  }
+  function escClose(e){ if(e.key==='Escape') closeModal(); }
+  function closeModal(){
+    document.getElementById('modal-root').innerHTML='';
+    document.removeEventListener('keydown', escClose);
+  }
+
+  /* ================= RENDER: HEADER ================= */
+  function headerCaseNo(){
+    return `Dossi&ecirc; N&ordm; ${String(state.sessions.length).padStart(3,'0')} &middot; agente <span class="redact" style="width:58px"></span> &middot; NEX <span class="redact" style="width:26px"></span> &middot; classifica&ccedil;&atilde;o: paranormal`;
+  }
+  function renderHeader(){
+    const header = document.getElementById('site-header');
+    header.innerHTML = `
+      <div class="watermark"><span>CONFIDENCIAL</span></div>
+      <div class="case-no">${headerCaseNo()}</div>
+      <div class="candle-glow"></div>
+      <h1 class="site-title" id="title-display" tabindex="0" role="button" aria-label="Editar nome do site">${escapeHtml(state.meta.siteTitle)}</h1>
+      <p class="site-tagline" id="tagline-display" tabindex="0" role="button" aria-label="Editar legenda">${escapeHtml(state.meta.tagline)}</p>
+      <div class="edit-hint">clique no t&iacute;tulo ou na legenda para editar</div>
+    `;
+    document.getElementById('title-display').addEventListener('click', startHeaderEdit);
+    document.getElementById('tagline-display').addEventListener('click', startHeaderEdit);
+  }
+  function startHeaderEdit(){
+    const header = document.getElementById('site-header');
+    header.innerHTML = `
+      <div class="watermark"><span>CONFIDENCIAL</span></div>
+      <div class="case-no">${headerCaseNo()}</div>
+      <div class="candle-glow"></div>
+      <div class="header-edit-form">
+        <input id="edit-title" value="${escapeHtml(state.meta.siteTitle)}" placeholder="Nome da campanha" />
+        <input id="edit-tagline" value="${escapeHtml(state.meta.tagline)}" placeholder="Legenda" />
+        <div class="row">
+          <button class="btn btn-primary" id="save-header">Salvar</button>
+          <button class="btn" id="cancel-header">Cancelar</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('save-header').addEventListener('click', async ()=>{
+      const t = document.getElementById('edit-title').value.trim();
+      const tg = document.getElementById('edit-tagline').value.trim();
+      if(t) state.meta.siteTitle = t;
+      state.meta.tagline = tg;
+      await saveMeta();
+      toast('Cabeçalho atualizado.');
+      renderHeader();
+    });
+    document.getElementById('cancel-header').addEventListener('click', renderHeader);
+  }
+
+  /* ================= RENDER: HIDDEN INDEX (menu trigger + drawer) ================= */
+  const SECTIONS = [
+    {id:'sessoes', label:'Relat\u00f3rios de Campo', icon:'book'},
+    {id:'noticias', label:'Boletins da Ordem', icon:'bell'},
+    {id:'documentos', label:'Dossi\u00eas Restritos', icon:'lock'}
+  ];
+  function renderMenuTrigger(){
+    document.getElementById('menu-trigger').innerHTML = `${ICONS.folder} <span>&Iacute;ndice</span>`;
+  }
+  function renderDrawer(){
+    document.getElementById('drawer').innerHTML = `
+      <div class="drawer-head">
+        <div>
+          <span class="stamp-label">Acesso &mdash; nível agente</span>
+          <h4>&Iacute;ndice do Dossi&ecirc;</h4>
+        </div>
+        <button class="drawer-close" id="drawer-close" aria-label="Fechar">${ICONS.x}</button>
+      </div>
+      <div class="drawer-list">
+        ${SECTIONS.map(s=>`
+          <button class="drawer-item ${state.activeTab===s.id?'active':''}" data-tab="${s.id}">
+            ${ICONS[s.icon]}<span>${s.label}</span>
+            ${s.id==='documentos' && !state.unlocked ? '<span class="tag-restrict">lacrado</span>' : ''}
+          </button>
+        `).join('')}
+      </div>
+      <div class="drawer-foot">acesso registrado &middot; n&atilde;o compartilhe este c&oacute;digo</div>
+    `;
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    document.querySelectorAll('.drawer-item').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.activeTab = btn.dataset.tab;
+        closeDrawer();
+        renderContent();
+      });
+    });
+  }
+  function openDrawer(){
+    state.drawerOpen = true;
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('drawer-overlay').classList.add('open');
+    document.addEventListener('keydown', drawerEscClose);
+  }
+  function closeDrawer(){
+    state.drawerOpen = false;
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawer-overlay').classList.remove('open');
+    document.removeEventListener('keydown', drawerEscClose);
+    renderDrawer();
+  }
+  function drawerEscClose(e){ if(e.key==='Escape') closeDrawer(); }
+  function initMenu(){
+    renderMenuTrigger();
+    renderDrawer();
+    document.getElementById('menu-trigger').addEventListener('click', openDrawer);
+    document.getElementById('drawer-overlay').addEventListener('click', closeDrawer);
+  }
+
+  /* ================= RENDER: CONTENT ROUTER ================= */
+  function renderContent(){
+    const c = document.getElementById('content');
+    if(state.loading){
+      c.innerHTML = `<div class="loading-state">o arquivo est&aacute; sendo desenterrado&hellip;</div>`;
+      return;
+    }
+    if(state.activeTab==='sessoes') renderSessions(c);
+    else if(state.activeTab==='noticias') renderNews(c);
+    else renderDocuments(c);
+  }
+
+  /* ================= SESSIONS ================= */
+  function renderSessions(c){
+    const sorted = [...state.sessions].sort((a,b)=> (b.number||0)-(a.number||0));
+    c.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Relat&oacute;rios de Campo</h2>
+          <div class="section-sub">${state.sessions.length} relat&oacute;rio${state.sessions.length===1?'':'s'} arquivado${state.sessions.length===1?'':'s'}</div>
+        </div>
+        <button class="btn btn-primary" id="add-session">${ICONS.plus} Novo relat&oacute;rio</button>
+      </div>
+      <div class="card-list" id="session-list">
+        ${sorted.length===0 ? emptyState('Nenhum relat\u00f3rio de campo arquivado ainda. A Ordem aguarda o primeiro relato.') : sorted.map(sessionCard).join('')}
+      </div>
+    `;
+    document.getElementById('add-session').addEventListener('click', ()=>openSessionForm());
+    bindSessionEvents();
+  }
+  function sessionCard(s){
+    const hasNotes = s.notes && s.notes.trim().length>0;
+    const open = !!state.openNotes[s.id];
+    return `
+      <article class="entry-card" data-id="${s.id}">
+        <div class="entry-actions">
+          <button class="edit-session" data-id="${s.id}" aria-label="Editar">${ICONS.pencil}</button>
+          <button class="delete-session" data-id="${s.id}" aria-label="Excluir">${ICONS.trash}</button>
+        </div>
+        <div class="entry-meta">
+          <span>Sess&atilde;o ${s.number ?? '?'}</span>
+          ${s.realDate ? `<span>${fmtDate(s.realDate)}</span>` : ''}
+          ${s.inGameDate ? `<span>data do mundo: ${escapeHtml(s.inGameDate)}</span>` : ''}
+        </div>
+        <h3 class="entry-title">${escapeHtml(s.title || 'Sem t\u00edtulo')}</h3>
+        ${s.summary ? `<div class="entry-body">${escapeHtml(s.summary)}</div>` : ''}
+        ${hasNotes ? `
+          <button class="entry-toggle toggle-notes ${open?'open':''}" data-id="${s.id}">${ICONS.chevron} ${open?'Ocultar registro completo':'Ler registro completo'}</button>
+          <div class="entry-notes ${open?'open':''}" id="notes-${s.id}">${escapeHtml(s.notes)}</div>
+        ` : ''}
+      </article>
+    `;
+  }
+  function bindSessionEvents(){
+    document.querySelectorAll('.edit-session').forEach(b=>b.addEventListener('click', ()=>{
+      const s = state.sessions.find(x=>x.id===b.dataset.id);
+      if(s) openSessionForm(s);
+    }));
+    document.querySelectorAll('.delete-session').forEach(b=>b.addEventListener('click', async ()=>{
+      const s = state.sessions.find(x=>x.id===b.dataset.id);
+      if(!s) return;
+      if(!confirm(`Apagar o relat\u00f3rio da Sess\u00e3o ${s.number} ("${s.title}")? Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.`)) return;
+      state.sessions = state.sessions.filter(x=>x.id!==s.id);
+      const ok = await saveSessions();
+      if(ok) toast('Relat\u00f3rio apagado.');
+      renderHeader();
+      renderSessions(document.getElementById('content'));
+    }));
+    document.querySelectorAll('.toggle-notes').forEach(b=>b.addEventListener('click', ()=>{
+      state.openNotes[b.dataset.id] = !state.openNotes[b.dataset.id];
+      renderSessions(document.getElementById('content'));
+    }));
+  }
+  function openSessionForm(existing){
+    const isEdit = !!existing;
+    const nextNumber = isEdit ? existing.number : (Math.max(0, ...state.sessions.map(s=>s.number||0)) + 1);
+    openModal(`
+      <h3>${isEdit?'Editar relat\u00f3rio':'Novo relat\u00f3rio de campo'}</h3>
+      <div class="field-row">
+        <div class="field"><label>N&uacute;mero</label><input id="f-number" type="number" value="${nextNumber}"></div>
+        <div class="field"><label>Data (real)</label><input id="f-realdate" type="date" value="${existing?.realDate || ''}"></div>
+      </div>
+      <div class="field"><label>T&iacute;tulo</label><input id="f-title" value="${escapeHtml(existing?.title || '')}" placeholder="Ex: O Po\u00e7o Sob a Capela"></div>
+      <div class="field"><label>Data no mundo (opcional)</label><input id="f-ingame" value="${escapeHtml(existing?.inGameDate || '')}" placeholder="Ex: 14&ordm; dia da Lua Cheia"></div>
+      <div class="field"><label>Resumo</label><textarea id="f-summary" placeholder="Um par\u00e1grafo curto sobre o que aconteceu">${escapeHtml(existing?.summary || '')}</textarea></div>
+      <div class="field"><label>Registro completo (opcional)</label><textarea id="f-notes" style="min-height:140px" placeholder="Anota\u00e7\u00f5es detalhadas, falas, decis\u00f5es, segredos revelados...">${escapeHtml(existing?.notes || '')}</textarea></div>
+      <div class="modal-actions">
+        <button class="btn" id="cancel-form">Cancelar</button>
+        <button class="btn btn-primary" id="save-form">Salvar registro</button>
+      </div>
+    `);
+    document.getElementById('cancel-form').addEventListener('click', closeModal);
+    document.getElementById('save-form').addEventListener('click', async ()=>{
+      const title = document.getElementById('f-title').value.trim();
+      if(!title){ toast('D\u00ea um t\u00edtulo \u00e0 sess\u00e3o antes de salvar.','error'); return; }
+      const data = {
+        id: existing?.id || uid(),
+        number: parseInt(document.getElementById('f-number').value,10) || nextNumber,
+        realDate: document.getElementById('f-realdate').value,
+        inGameDate: document.getElementById('f-ingame').value.trim(),
+        title,
+        summary: document.getElementById('f-summary').value.trim(),
+        notes: document.getElementById('f-notes').value.trim()
+      };
+      if(isEdit){
+        state.sessions = state.sessions.map(s=>s.id===existing.id ? data : s);
+      } else {
+        state.sessions.push(data);
+      }
+      const ok = await saveSessions();
+      if(ok) toast(isEdit?'Relat\u00f3rio atualizado.':'Relat\u00f3rio arquivado.');
+      closeModal();
+      renderHeader();
+      renderSessions(document.getElementById('content'));
+    });
+  }
+
+  /* ================= NEWS ================= */
+  function renderNews(c){
+    const sorted = [...state.news].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+    c.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Boletins da Ordem</h2>
+          <div class="section-sub">${state.news.length} boletim${state.news.length===1?'':'ns'} emitido${state.news.length===1?'':'s'}</div>
+        </div>
+        <button class="btn btn-primary" id="add-news">${ICONS.plus} Novo boletim</button>
+      </div>
+      <div class="card-list" id="news-list">
+        ${sorted.length===0 ? emptyState('Nenhum boletim emitido ainda. Os rumores ainda n\u00e3o come\u00e7aram a circular pelos corredores da Ordem.') : sorted.map(newsCard).join('')}
+      </div>
+    `;
+    document.getElementById('add-news').addEventListener('click', ()=>openNewsForm());
+    bindNewsEvents();
+  }
+  function newsCard(n){
+    return `
+      <article class="entry-card" data-id="${n.id}">
+        <div class="entry-actions">
+          <button class="edit-news" data-id="${n.id}" aria-label="Editar">${ICONS.pencil}</button>
+          <button class="delete-news" data-id="${n.id}" aria-label="Excluir">${ICONS.trash}</button>
+        </div>
+        <h3 class="entry-title"><span class="pin-dot"></span>${escapeHtml(n.title || 'Sem t\u00edtulo')}</h3>
+        <div class="news-byline">por ${escapeHtml(n.author || 'an\u00f4nimo')} ${n.date ? '&middot; ' + fmtDate(n.date) : ''}</div>
+        <div class="entry-body">${escapeHtml(n.content || '')}</div>
+      </article>
+    `;
+  }
+  function bindNewsEvents(){
+    document.querySelectorAll('.edit-news').forEach(b=>b.addEventListener('click', ()=>{
+      const n = state.news.find(x=>x.id===b.dataset.id);
+      if(n) openNewsForm(n);
+    }));
+    document.querySelectorAll('.delete-news').forEach(b=>b.addEventListener('click', async ()=>{
+      const n = state.news.find(x=>x.id===b.dataset.id);
+      if(!n) return;
+      if(!confirm(`Apagar o boletim "${n.title}"? Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.`)) return;
+      state.news = state.news.filter(x=>x.id!==n.id);
+      const ok = await saveNews();
+      if(ok) toast('Boletim removido.');
+      renderNews(document.getElementById('content'));
+    }));
+  }
+  function openNewsForm(existing){
+    const isEdit = !!existing;
+    const today = new Date().toISOString().slice(0,10);
+    openModal(`
+      <h3>${isEdit?'Editar boletim':'Novo boletim'}</h3>
+      <div class="field"><label>T&iacute;tulo</label><input id="f-title" value="${escapeHtml(existing?.title || '')}" placeholder="Ex: Desaparecimentos no Bairro Velho"></div>
+      <div class="field-row">
+        <div class="field"><label>Autor</label><input id="f-author" value="${escapeHtml(existing?.author || '')}" placeholder="Quem assina o aviso"></div>
+        <div class="field"><label>Data</label><input id="f-date" type="date" value="${existing?.date || today}"></div>
+      </div>
+      <div class="field"><label>Conte&uacute;do</label><textarea id="f-content" style="min-height:140px" placeholder="O texto do comunicado, boato ou not\u00edcia">${escapeHtml(existing?.content || '')}</textarea></div>
+      <div class="modal-actions">
+        <button class="btn" id="cancel-form">Cancelar</button>
+        <button class="btn btn-primary" id="save-form">Publicar</button>
+      </div>
+    `);
+    document.getElementById('cancel-form').addEventListener('click', closeModal);
+    document.getElementById('save-form').addEventListener('click', async ()=>{
+      const title = document.getElementById('f-title').value.trim();
+      if(!title){ toast('D\u00ea um t\u00edtulo ao comunicado antes de publicar.','error'); return; }
+      const data = {
+        id: existing?.id || uid(),
+        title,
+        author: document.getElementById('f-author').value.trim(),
+        date: document.getElementById('f-date').value,
+        content: document.getElementById('f-content').value.trim()
+      };
+      if(isEdit){
+        state.news = state.news.map(n=>n.id===existing.id ? data : n);
+      } else {
+        state.news.push(data);
+      }
+      const ok = await saveNews();
+      if(ok) toast(isEdit?'Boletim atualizado.':'Boletim publicado.');
+      closeModal();
+      renderNews(document.getElementById('content'));
+    });
+  }
+
+  /* ================= DOCUMENTS ================= */
+  function renderDocuments(c){
+    if(!state.unlocked){
+      renderGate(c);
+      return;
+    }
+    c.innerHTML = `
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Arquivo Restrito</h2>
+          <div class="section-sub">${state.documents.length} dossi&ecirc;${state.documents.length===1?'':'s'} sob lacre</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="add-doc">${ICONS.plus} Novo dossi&ecirc;</button>
+          <button class="btn" id="change-code">${ICONS.key} C&oacute;digo</button>
+          <button class="btn btn-ghost" id="relock">${ICONS.lockOpen} Selar novamente</button>
+        </div>
+      </div>
+      <div id="doc-list">
+        ${state.documents.length===0 ? emptyState('Nenhum dossi\u00ea arquivado. O cofre est\u00e1 vazio &mdash; por enquanto.') : state.documents.map(docCard).join('')}
+      </div>
+    `;
+    document.getElementById('add-doc').addEventListener('click', ()=>openDocForm());
+    document.getElementById('change-code').addEventListener('click', openCodeForm);
+    document.getElementById('relock').addEventListener('click', ()=>{
+      state.unlocked = false;
+      renderDrawer();
+      renderDocuments(document.getElementById('content'));
+    });
+    bindDocEvents();
+  }
+  function docCard(d){
+    return `
+      <div class="doc-card" data-id="${d.id}">
+        <span class="restricted-tag">classificado</span>
+        <div class="entry-actions" style="top:14px;right:14px;">
+          <button class="edit-doc" data-id="${d.id}" aria-label="Editar">${ICONS.pencil}</button>
+          <button class="delete-doc" data-id="${d.id}" aria-label="Excluir">${ICONS.trash}</button>
+        </div>
+        <h3 class="doc-title">${escapeHtml(d.title || 'Sem t\u00edtulo')}</h3>
+        ${d.description ? `<div class="doc-desc">${escapeHtml(d.description)}</div>` : ''}
+        ${d.type==='link'
+          ? `<a class="btn" href="${escapeHtml(d.value)}" target="_blank" rel="noopener noreferrer">${ICONS.link} Abrir arquivo</a>`
+          : `<div class="doc-text">${escapeHtml(d.value)}</div>`}
+      </div>
+    `;
+  }
+  function bindDocEvents(){
+    document.querySelectorAll('.edit-doc').forEach(b=>b.addEventListener('click', ()=>{
+      const d = state.documents.find(x=>x.id===b.dataset.id);
+      if(d) openDocForm(d);
+    }));
+    document.querySelectorAll('.delete-doc').forEach(b=>b.addEventListener('click', async ()=>{
+      const d = state.documents.find(x=>x.id===b.dataset.id);
+      if(!d) return;
+      if(!confirm(`Apagar o dossi\u00ea "${d.title}"? Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita.`)) return;
+      state.documents = state.documents.filter(x=>x.id!==d.id);
+      const ok = await saveDocuments();
+      if(ok) toast('Dossi\u00ea removido do arquivo.');
+      renderDocuments(document.getElementById('content'));
+    }));
+  }
+  function openDocForm(existing){
+    const isEdit = !!existing;
+    const type = existing?.type || 'link';
+    openModal(`
+      <h3>${isEdit?'Editar dossi\u00ea':'Novo dossi\u00ea'}</h3>
+      <div class="field"><label>T&iacute;tulo</label><input id="f-title" value="${escapeHtml(existing?.title || '')}" placeholder="Ex: Mapa da Cripta"></div>
+      <div class="field"><label>Descri&ccedil;&atilde;o (opcional)</label><textarea id="f-desc" placeholder="Do que se trata este dossi\u00ea">${escapeHtml(existing?.description || '')}</textarea></div>
+      <div class="field"><label>Tipo</label>
+        <select id="f-type">
+          <option value="link" ${type==='link'?'selected':''}>Link externo (arquivo hospedado em outro lugar)</option>
+          <option value="text" ${type==='text'?'selected':''}>Texto direto</option>
+        </select>
+      </div>
+      <div class="field" id="value-wrap">
+        <label id="value-label">${type==='link'?'URL do arquivo':'Conte\u00fado'}</label>
+        ${type==='link'
+          ? `<input id="f-value" value="${escapeHtml(existing?.value || '')}" placeholder="https://...">`
+          : `<textarea id="f-value" style="min-height:120px" placeholder="Cole o texto do dossi\u00ea aqui">${escapeHtml(existing?.value || '')}</textarea>`}
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="cancel-form">Cancelar</button>
+        <button class="btn btn-primary" id="save-form">Salvar dossi&ecirc;</button>
+      </div>
+    `);
+    document.getElementById('f-type').addEventListener('change', (e)=>{
+      const wrap = document.getElementById('value-wrap');
+      const isLink = e.target.value==='link';
+      wrap.innerHTML = `
+        <label>${isLink?'URL do arquivo':'Conte\u00fado'}</label>
+        ${isLink
+          ? `<input id="f-value" placeholder="https://...">`
+          : `<textarea id="f-value" style="min-height:120px" placeholder="Cole o texto do dossi\u00ea aqui"></textarea>`}
+      `;
+    });
+    document.getElementById('cancel-form').addEventListener('click', closeModal);
+    document.getElementById('save-form').addEventListener('click', async ()=>{
+      const title = document.getElementById('f-title').value.trim();
+      const value = document.getElementById('f-value').value.trim();
+      if(!title){ toast('D\u00ea um t\u00edtulo ao dossi\u00ea antes de salvar.','error'); return; }
+      if(!value){ toast('Preencha o link ou o conte\u00fado do dossi\u00ea.','error'); return; }
+      const data = {
+        id: existing?.id || uid(),
+        title,
+        description: document.getElementById('f-desc').value.trim(),
+        type: document.getElementById('f-type').value,
+        value
+      };
+      if(isEdit){
+        state.documents = state.documents.map(d=>d.id===existing.id ? data : d);
+      } else {
+        state.documents.push(data);
+      }
+      const ok = await saveDocuments();
+      if(ok) toast(isEdit?'Dossi\u00ea atualizado.':'Dossi\u00ea arquivado.');
+      closeModal();
+      renderDocuments(document.getElementById('content'));
+    });
+  }
+
+  function renderGate(c){
+    const hasCode = !!state.meta.accessCode;
+    c.innerHTML = `
+      <div class="gate-wrap">
+        <div class="seal" id="seal">${ICONS.eye}</div>
+        ${hasCode ? `
+          <div class="gate-label">Arquivo lacrado</div>
+          <div class="gate-sub">Esta se&ccedil;&atilde;o guarda dossi&ecirc;s e materiais confidenciais da Ordem. Insira o c&oacute;digo de acesso para romper o lacre.</div>
+          <div class="gate-form">
+            <input id="gate-code" type="password" placeholder="C&oacute;digo de acesso" autocomplete="off">
+            <button class="btn btn-primary" id="gate-submit">Romper o lacre</button>
+          </div>
+        ` : `
+          <div class="gate-label">Nenhum lacre definido</div>
+          <div class="gate-sub">Este arquivo ainda n&atilde;o tem um c&oacute;digo de acesso. Defina um agora &mdash; ele ser&aacute; pedido sempre que algu&eacute;m quiser abrir os dossi&ecirc;s.</div>
+          <div class="gate-form">
+            <input id="gate-code" type="text" placeholder="Crie um c&oacute;digo de acesso" autocomplete="off">
+            <button class="btn btn-primary" id="gate-submit">Selar o arquivo</button>
+          </div>
+        `}
+      </div>
+    `;
+    document.getElementById('gate-submit').addEventListener('click', handleGateSubmit);
+    document.getElementById('gate-code').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleGateSubmit(); });
+  }
+  async function handleGateSubmit(){
+    const input = document.getElementById('gate-code');
+    const val = input.value;
+    if(!state.meta.accessCode){
+      if(!val.trim()){ toast('Digite um c\u00f3digo antes de selar o arquivo.','error'); return; }
+      state.meta.accessCode = val.trim();
+      await saveMeta();
+      state.unlocked = true;
+      toast('Arquivo selado. Guarde este c\u00f3digo.');
+      renderDrawer();
+      renderDocuments(document.getElementById('content'));
+      return;
+    }
+    if(val === state.meta.accessCode){
+      state.unlocked = true;
+      renderDrawer();
+      renderDocuments(document.getElementById('content'));
+    } else {
+      const seal = document.getElementById('seal');
+      seal.classList.add('shake');
+      setTimeout(()=>seal.classList.remove('shake'), 400);
+      toast('C\u00f3digo incorreto. O lacre permanece intacto.','error');
+    }
+  }
+  function openCodeForm(){
+    openModal(`
+      <h3>Alterar c&oacute;digo de acesso</h3>
+      <div class="field"><label>Novo c&oacute;digo</label><input id="f-code" type="text" placeholder="Digite o novo c\u00f3digo"></div>
+      <div class="section-sub" style="margin-bottom:14px;padding-left:0;">Quem j&aacute; tiver o c&oacute;digo antigo perder&aacute; o acesso at&eacute; receber o novo.</div>
+      <div class="modal-actions">
+        <button class="btn" id="cancel-form">Cancelar</button>
+        <button class="btn btn-primary" id="save-form">Salvar novo c&oacute;digo</button>
+      </div>
+    `);
+    document.getElementById('cancel-form').addEventListener('click', closeModal);
+    document.getElementById('save-form').addEventListener('click', async ()=>{
+      const val = document.getElementById('f-code').value.trim();
+      if(!val){ toast('Digite um c\u00f3digo v\u00e1lido.','error'); return; }
+      state.meta.accessCode = val;
+      const ok = await saveMeta();
+      if(ok) toast('C\u00f3digo de acesso atualizado.');
+      closeModal();
+    });
+  }
+
+  /* ================= EMPTY STATE HELPER ================= */
+  function emptyState(msg){
+    return `<div class="empty-state"><div class="glyph">&#10013;</div><p>${msg}</p></div>`;
+  }
+
+  /* ================= INIT ================= */
+  async function init(){
+    renderHeader();
+    initMenu();
+    renderContent();
+
+    const [meta, sessions, news, documents] = await Promise.all([
+      storageGet('meta', state.meta),
+      storageGet('sessions', []),
+      storageGet('news', []),
+      storageGet('documents', [])
+    ]);
+    state.meta = Object.assign({siteTitle:'Dossi\u00ea Paranormal', tagline:'', accessCode:''}, meta);
+    state.sessions = Array.isArray(sessions) ? sessions : [];
+    state.news = Array.isArray(news) ? news : [];
+    state.documents = Array.isArray(documents) ? documents : [];
+    state.loading = false;
+
+    renderHeader();
+    renderContent();
+  }
+
+  init();
+})();
+</script>
+
+<script id="auth-system">
+(function(){
+const USERS_KEY='dp_users';
+const SESSION_KEY='dp_session';
+
+function seed(){
+ let users=JSON.parse(localStorage.getItem(USERS_KEY)||'[]');
+ if(!users.length){
+   users.push({nome:'Mestre',email:'mestre@campanha.com',senha:'123456',cargo:'mestre'});
+   localStorage.setItem(USERS_KEY,JSON.stringify(users));
+ }
+}
+function current(){ return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); }
+
+function applyPermissions(){
+ const u=current();
+ if(!u) return;
+ if(u.cargo!=='mestre'){
+   document.querySelectorAll('button').forEach(b=>{
+     const t=(b.textContent||'').toLowerCase();
+     if(t.includes('novo')||t.includes('editar')) b.style.display='none';
+   });
+ }
+}
+function overlay(){
+ if(current()){ setTimeout(applyPermissions,800); return; }
+ const div=document.createElement('div');
+ div.id='authOverlay';
+ div.innerHTML=`<div class="auth-card">
+ <h2>Dossie Paranormal</h2>
+ <input id="lgEmail" placeholder="Email">
+ <input id="lgSenha" type="password" placeholder="Senha">
+ <button id="loginBtn">Entrar</button>
+ <hr>
+ <input id="cadNome" placeholder="Nome do agente">
+ <input id="cadEmail" placeholder="Email">
+ <input id="cadSenha" type="password" placeholder="Senha">
+ <button id="cadBtn">Criar conta</button>
+ <p style="font-size:12px">Mestre padrão: mestre@campanha.com / 123456</p>
+ </div>`;
+ document.body.appendChild(div);
+
+ document.getElementById('loginBtn').onclick=()=>{
+   const users=JSON.parse(localStorage.getItem(USERS_KEY)||'[]');
+   const u=users.find(x=>x.email===lgEmail.value && x.senha===lgSenha.value);
+   if(!u){ alert('Credenciais invalidas'); return; }
+   localStorage.setItem(SESSION_KEY,JSON.stringify(u));
+   div.remove();
+   applyPermissions();
+ };
+
+ document.getElementById('cadBtn').onclick=()=>{
+   const users=JSON.parse(localStorage.getItem(USERS_KEY)||'[]');
+   if(users.some(x=>x.email===cadEmail.value)){ alert('Email ja cadastrado'); return; }
+   users.push({nome:cadNome.value,email:cadEmail.value,senha:cadSenha.value,cargo:'jogador'});
+   localStorage.setItem(USERS_KEY,JSON.stringify(users));
+   alert('Conta criada');
+ };
+}
+seed();
+window.addEventListener('load',overlay);
+})();
+</script>
+
+</body>
+</html>
